@@ -24,14 +24,19 @@ autoTable(doc, {
 });
 
 doc.setFontSize(12);
-const startY = 90;
 const metin = `${form.adSoyad} olarak, ${form.kurum} bünyesindeki ${form.departman} görevimden kendi isteğimle ${form.tarih} tarihi itibariyle istifa ediyorum.`;
 const sebepMetni = form.sebep ? `\n\nİstifa sebebim: ${form.sebep}` : '';
+const fullText = doc.splitTextToSize(metin + sebepMetni + '\n\nGereğini arz ederim.', 170);
 
-doc.text(metin + sebepMetni + '\n\nGereğini arz ederim.', 20, startY, { maxWidth: 170 });
+let y = 100;
+fullText.forEach((line) => {
+  doc.text(line, 20, y);
+  y += 8;
+});
 
-doc.text(form.adSoyad, 150, 250);
-doc.text('(İmza)', 160, 260);
+y += 20;
+doc.text(form.adSoyad, 150, y);
+doc.text('(İmza)', 160, y + 10);
 
 doc.save('istifa_dilekcesi.pdf');
 
