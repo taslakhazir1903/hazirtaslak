@@ -26,7 +26,7 @@ if (seciliBelge === 'kira') {
   doc.text(normalizeText(form.baslik), 105, 40, { align: 'center' });
   doc.setFontSize(12);
   doc.text(normalizeText(form.metin), 20, 60, { maxWidth: 170 });
-  doc.text('Geregini arz ederim.', 20, 110);
+  doc.text('Geregini arz ederim.', 140, 110);
   doc.text(`${normalizeText(form.adSoyad)}`, 150, 150);
   doc.text('(Imza)', 160, 160);
   doc.save('dilekce.pdf');
