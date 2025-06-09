@@ -6,8 +6,9 @@ const handleChange = (e) => { setForm({ ...form, [e.target.name]: e.target.value
 
 const handleSubmit = (e) => { e.preventDefault(); const doc = new jsPDF();
 
+doc.setFont('helvetica', 'normal');
 doc.setFontSize(16);
-doc.text('ISTIFA DILEKCESI', 105, 20, { align: 'center' });
+doc.text('İSTİFA DİLEKÇESİ', 105, 20, { align: 'center' });
 
 autoTable(doc, {
   startY: 30,
@@ -26,7 +27,7 @@ autoTable(doc, {
 doc.setFontSize(12);
 const metin = `${form.adSoyad} olarak, ${form.kurum} bünyesindeki ${form.departman} görevimden kendi isteğimle ${form.tarih} tarihi itibariyle istifa ediyorum.`;
 const sebepMetni = form.sebep ? `\n\nİstifa sebebim: ${form.sebep}` : '';
-const fullText = doc.splitTextToSize(metin + sebepMetni + '\n\nGereğini arz ederim.', 170);
+const fullText = doc.splitTextToSize(metin + sebepMetni + '\n\nGereğinin yapılmasını arz ederim.', 170);
 
 let y = 100;
 fullText.forEach((line) => {
@@ -34,15 +35,10 @@ fullText.forEach((line) => {
   y += 8;
 });
 
-y += 20;
-if (y + 20 < 270) {
-  doc.text(form.adSoyad, 150, y);
-  doc.text('(İmza)', 160, y + 10);
-} else {
-  doc.addPage();
-  doc.text(form.adSoyad, 150, 250);
-  doc.text('(İmza)', 160, 260);
-}
+// Her zaman yeni sayfaya imza taşı
+doc.addPage();
+doc.text(form.adSoyad, 150, 250);
+doc.text('(İmza)', 160, 260);
 
 doc.save('istifa_dilekcesi.pdf');
 
@@ -74,7 +70,7 @@ return ( <div className="max-w-2xl mx-auto p-6 text-sm"> <h1 className="text-2xl
       <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
         <input name="tarih" type="date" placeholder="Tarih" onChange={handleChange} className="border p-2 rounded w-full" />
       </div>
-      <textarea name="sebep" placeholder="İstifa sebebiniz (isteğe bağlı)" onChange={handleChange} rows={8} className="border p-2 rounded w-full mt-4" />
+      <textarea name="sebep" placeholder="İstifa sebebiniz (isteğe bağlı)" onChange={handleChange} rows={10} className="border p-2 rounded w-full mt-4" />
     </div>
 
     <button className="w-full bg-green-600 text-white px-4 py-2 rounded">PDF Oluştur</button>
