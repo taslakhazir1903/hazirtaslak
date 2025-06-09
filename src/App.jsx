@@ -1,14 +1,19 @@
-import React, { useState, useEffect } from 'react'; import jsPDF from 'jspdf'; import autoTable from 'jspdf-autotable';
+import React, { useState } from 'react'; import jsPDF from 'jspdf'; import autoTable from 'jspdf-autotable';
+
+import RobotoFont from './Roboto-Regular.ttf'; // src klasöründe olması gerekiyor
 
 function App() { const [form, setForm] = useState({ adSoyad: '', tc: '', kurum: '', departman: '', tarih: '', sebep: '' });
 
-useEffect(() => { // Türkçe karakter destekli fontu yükle fetch('/Roboto-Regular.ttf') .then((res) => res.arrayBuffer()) .then((font) => { const doc = new jsPDF(); doc.addFileToVFS('Roboto-Regular.ttf', btoa( new Uint8Array(font).reduce((data, byte) => data + String.fromCharCode(byte), '') )); doc.addFont('Roboto-Regular.ttf', 'Roboto', 'normal'); }); }, []);
-
 const handleChange = (e) => { setForm({ ...form, [e.target.name]: e.target.value }); };
 
-const handleSubmit = (e) => { e.preventDefault(); const doc = new jsPDF();
+const handleSubmit = async (e) => { e.preventDefault(); const doc = new jsPDF();
 
-// Font tanımlama
+// Font dosyasını al ve base64'e çevir
+const fontResponse = await fetch(RobotoFont);
+const fontBuffer = await fontResponse.arrayBuffer();
+const fontBinary = new Uint8Array(fontBuffer).reduce((data, byte) => data + String.fromCharCode(byte), '');
+
+doc.addFileToVFS('Roboto-Regular.ttf', btoa(fontBinary));
 doc.addFont('Roboto-Regular.ttf', 'Roboto', 'normal');
 doc.setFont('Roboto');
 doc.setFontSize(16);
