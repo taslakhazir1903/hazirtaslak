@@ -1,12 +1,16 @@
-import React, { useState } from 'react'; import jsPDF from 'jspdf'; import autoTable from 'jspdf-autotable';
+import React, { useState, useEffect } from 'react'; import jsPDF from 'jspdf'; import autoTable from 'jspdf-autotable';
 
 function App() { const [form, setForm] = useState({ adSoyad: '', tc: '', kurum: '', departman: '', tarih: '', sebep: '' });
+
+useEffect(() => { // Türkçe karakter destekli fontu yükle fetch('/Roboto-Regular.ttf') .then((res) => res.arrayBuffer()) .then((font) => { const doc = new jsPDF(); doc.addFileToVFS('Roboto-Regular.ttf', btoa( new Uint8Array(font).reduce((data, byte) => data + String.fromCharCode(byte), '') )); doc.addFont('Roboto-Regular.ttf', 'Roboto', 'normal'); }); }, []);
 
 const handleChange = (e) => { setForm({ ...form, [e.target.name]: e.target.value }); };
 
 const handleSubmit = (e) => { e.preventDefault(); const doc = new jsPDF();
 
-doc.setFont('helvetica', 'normal');
+// Font tanımlama
+doc.addFont('Roboto-Regular.ttf', 'Roboto', 'normal');
+doc.setFont('Roboto');
 doc.setFontSize(16);
 doc.text('İSTİFA DİLEKÇESİ', 105, 20, { align: 'center' });
 
@@ -35,10 +39,9 @@ fullText.forEach((line) => {
   y += 8;
 });
 
-// Her zaman yeni sayfaya imza taşı
-doc.addPage();
-doc.text(form.adSoyad, 150, 250);
-doc.text('(İmza)', 160, 260);
+y += 20;
+doc.text(form.adSoyad, 150, y);
+doc.text('(İmza)', 160, y + 10);
 
 doc.save('istifa_dilekcesi.pdf');
 
