@@ -1,52 +1,32 @@
-import React, { useState } from 'react'; import jsPDF from 'jspdf'; import autoTable from 'jspdf-autotable';
-
-import RobotoFont from './Roboto-Regular.ttf'; // src klasöründe olması gerekiyor
+import React, { useState } from 'react'; import jsPDF from 'jspdf';
 
 function App() { const [form, setForm] = useState({ adSoyad: '', tc: '', kurum: '', departman: '', tarih: '', sebep: '' });
 
 const handleChange = (e) => { setForm({ ...form, [e.target.name]: e.target.value }); };
 
-const handleSubmit = async (e) => { e.preventDefault(); const doc = new jsPDF();
+const handleSubmit = (e) => { e.preventDefault(); const doc = new jsPDF();
 
-// Font dosyasını al ve base64'e çevir
-const fontResponse = await fetch(RobotoFont);
-const fontBuffer = await fontResponse.arrayBuffer();
-const fontBinary = new Uint8Array(fontBuffer).reduce((data, byte) => data + String.fromCharCode(byte), '');
+doc.setFont('helvetica', 'normal');
+doc.setFontSize(14);
+doc.text('İSTİFA DİLEKÇESİ', 105, 30, { align: 'center' });
 
-doc.addFileToVFS('Roboto-Regular.ttf', btoa(fontBinary));
-doc.addFont('Roboto-Regular.ttf', 'Roboto', 'normal');
-doc.setFont('Roboto');
-doc.setFontSize(16);
-doc.text('İSTİFA DİLEKÇESİ', 105, 20, { align: 'center' });
-
-autoTable(doc, {
-  startY: 30,
-  head: [['Alan', 'Bilgi']],
-  body: [
-    ['Ad Soyad', form.adSoyad],
-    ['TC Kimlik No', form.tc],
-    ['Kurum / Şirket', form.kurum],
-    ['Departman / Görev', form.departman],
-    ['Tarih', form.tarih]
-  ],
-  styles: { fontSize: 12, cellPadding: 4 },
-  margin: { left: 15, right: 15 },
-});
-
-doc.setFontSize(12);
 const metin = `${form.adSoyad} olarak, ${form.kurum} bünyesindeki ${form.departman} görevimden kendi isteğimle ${form.tarih} tarihi itibariyle istifa ediyorum.`;
 const sebepMetni = form.sebep ? `\n\nİstifa sebebim: ${form.sebep}` : '';
-const fullText = doc.splitTextToSize(metin + sebepMetni + '\n\nGereğinin yapılmasını arz ederim.', 170);
+const dilekceMetni = metin + sebepMetni + '\n\nGereğinin yapılmasını arz ederim.';
 
-let y = 100;
-fullText.forEach((line) => {
+const wrappedText = doc.splitTextToSize(dilekceMetni, 170);
+let y = 50;
+wrappedText.forEach(line => {
   doc.text(line, 20, y);
   y += 8;
 });
 
-y += 20;
-doc.text(form.adSoyad, 150, y);
-doc.text('(İmza)', 160, y + 10);
+// İmza ve ad soyad yazısını sayfanın altına yerleştir
+doc.text(form.adSoyad, 140, 260);
+doc.text('(İmza)', 150, 270);
+
+// Tarihi sağ alt köşeye yerleştir
+doc.text(form.tarih, 150, 280);
 
 doc.save('istifa_dilekcesi.pdf');
 
