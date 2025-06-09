@@ -1,57 +1,99 @@
 import React, { useState } from 'react'; import jsPDF from 'jspdf';
 
-function App() { const [form, setForm] = useState({ kirayaVeren: '', kiraci: '', tcNo: '', adres: '', baslangic: '', bitis: '', kiraBedeli: '', adSoyad: '', tc: '', adresDilekce: '', baslik: '', metin: '', tarih: '' });
-
-const [seciliBelge, setSeciliBelge] = useState(null);
+function App() { const [form, setForm] = useState({ mahalle: '', sokak: '', numara: '', cinsi: '', kullanim: '', durum: '', demirbas: '', kirayaVeren: '', kirayaVerenTC: '', kirayaVerenAdres: '', kiraci: '', kiraciTC: '', kiraciAdres: '', baslangic: '', sure: '', yillikBedel: '', aylikBedel: '', odemeSekli: '', tarih: '' });
 
 const handleChange = (e) => { setForm({ ...form, [e.target.name]: e.target.value }); };
 
-const normalizeText = (text) => { return text .replace(/ş/g, 's').replace(/Ş/g, 'S') .replace(/ğ/g, 'g').replace(/Ğ/g, 'G') .replace(/ü/g, 'u').replace(/Ü/g, 'U') .replace(/ö/g, 'o').replace(/Ö/g, 'O') .replace(/ç/g, 'c').replace(/Ç/g, 'C') .replace(/ı/g, 'i').replace(/İ/g, 'I'); };
-
 const handleSubmit = (e) => { e.preventDefault(); const doc = new jsPDF(); doc.setFontSize(12);
 
-if (seciliBelge === 'kira') {
-  doc.text('KIRA SOZLESMESI', 20, 20);
-  doc.text(`Kiraya Veren: ${normalizeText(form.kirayaVeren)}`, 20, 40);
-  doc.text(`Kiraci: ${normalizeText(form.kiraci)}`, 20, 50);
-  doc.text(`TC Kimlik No: ${form.tcNo}`, 20, 60);
-  doc.text(`Kiralanan Yer: ${normalizeText(form.adres)}`, 20, 70);
-  doc.text(`Baslangic Tarihi: ${form.baslangic}`, 20, 80);
-  doc.text(`Bitis Tarihi: ${form.bitis}`, 20, 90);
-  doc.text(`Aylik Kira Bedeli: ${form.kiraBedeli} ₺`, 20, 100);
-  doc.save('kira_sozlesmesi.pdf');
-} else if (seciliBelge === 'dilekce') {
-  doc.text(`Tarih: ${form.tarih}`, 150, 20);
-  doc.setFontSize(14);
-  doc.text(normalizeText(form.baslik), 105, 40, { align: 'center' });
-  doc.setFontSize(12);
-  doc.text(normalizeText(form.metin), 20, 60, { maxWidth: 170 });
-  doc.text('Geregini arz ederim.', 140, 110);
-  doc.text(`${normalizeText(form.adSoyad)}`, 150, 150);
-  doc.text('(Imza)', 160, 160);
-  doc.save('dilekce.pdf');
-}
+doc.text('KIRA SOZLESMESI', 105, 15, { align: 'center' });
+
+const lines = [
+  `Kiralananin Mahallesi: ${form.mahalle}`,
+  `Kiralananin Cadde/Sokagi: ${form.sokak}`,
+  `Kiralananin Numarasi: ${form.numara}`,
+  `Kiralananin Cinsi: ${form.cinsi}`,
+  `Kiralananin Kullanim Sekli: ${form.kullanim}`,
+  `Kiralananin Durumu: ${form.durum}`,
+  `Demirbaslar: ${form.demirbas}`,
+  `Kiraya Veren: ${form.kirayaVeren}`,
+  `TC Kimlik No: ${form.kirayaVerenTC}`,
+  `Adres: ${form.kirayaVerenAdres}`,
+  `Kiraci: ${form.kiraci}`,
+  `TC Kimlik No: ${form.kiraciTC}`,
+  `Adres: ${form.kiraciAdres}`,
+  `Kira Baslangic Tarihi: ${form.baslangic}`,
+  `Kira Suresi: ${form.sure}`,
+  `Yillik Kira Bedeli: ${form.yillikBedel}`,
+  `Aylik Kira Bedeli: ${form.aylikBedel}`,
+  `Odeme Sekli: ${form.odemeSekli}`,
+];
+
+doc.setFontSize(10);
+let y = 25;
+lines.forEach((line) => {
+  doc.text(line, 20, y);
+  y += 6;
+});
+
+doc.setFontSize(12);
+doc.text('GENEL KOSULLAR', 105, y + 10, { align: 'center' });
+const genelKosullar = [
+  '1. Kiraci, kiralanani ozenle kullanmak zorundadir.',
+  '2. Kiraci, cevrede iyi niyet kurallarina uygun davranmalidir.',
+  '3. Kiralanani devredemez, baskasina kiralayamaz.',
+  '4. Yazili izin olmadan degisiklik yapilamaz.',
+  '5. Ucuncu sahis iddialarinda kiraya verene bildirilmelidir.',
+  '6. Onarim ihtiyaci durumunda haber verilmelidir.',
+  '7. Kat malikleri kararlarina uyulmalidir.',
+  '8. Onarim giderleri kiraciya aittir.',
+  '9. Vergiler kiraciya aittir.',
+  '10. Kiraci, teslim aldigi sekilde geri vermelidir.',
+  '11. Demirbaslar eksiksiz teslim edilmeli.',
+  '12. Kiralanan iyi durumda teslim edilmelidir.',
+  '13. Sona erme durumunda gezme izni verilmelidir.',
+  '14. Bosaltmada zarardan kiraci sorumludur.',
+  '15. Saglik tehlikesi durumunda teslim reddi.',
+  '16. Luks masraflar kiraciya ait.',
+  '17. Yazili onayla anten vb. yaptirilabilir.',
+  '18. Borclar kanununa tabi olunacaktir.',
+];
+
+y += 16;
+genelKosullar.forEach((k) => {
+  doc.text(k, 20, y);
+  y += 6;
+});
+
+doc.text('OZEL KOSULLAR', 105, y + 10, { align: 'center' });
+const ozelKosullar = [
+  '1. Alt kiraya verilemez, ortak alinmaz.',
+  '2. Meskenden baska amacla kullanilamaz.',
+  '3. Yalnizca kiraci, es ve cocuklari kalabilir.',
+  '4. Odemeler her ayin 5. gunune kadar yapilmalidir.',
+  '5. Yakacak ve giderler kiraciya aittir.',
+  '6. Tesisatlar saglam olarak teslim edilmistir.',
+  '7. Kiraci dikkatli kullanmalidir.',
+  '8. Elektrik aboneligi kiraciya aittir.',
+  '9. 3 gun icinde beyanname verilecektir.',
+  '10. Anlasmazliklar ilgili mahkemelere gider.',
+];
+y += 16;
+ozelKosullar.forEach((k) => {
+  doc.text(k, 20, y);
+  y += 6;
+});
+
+doc.text(`Tarih: ${form.tarih}`, 20, y + 10);
+doc.text('Kiraya Veren', 30, y + 30);
+doc.text('Kiraci', 100, y + 30);
+doc.text('Kefil', 160, y + 30);
+
+doc.save('kira_sozlesmesi.pdf');
 
 };
 
-const renderForm = () => { if (seciliBelge === 'kira') { return ( <form onSubmit={handleSubmit} className="space-y-4 mt-4"> <input type="text" name="kirayaVeren" placeholder="Kiraya Veren Ad Soyad" onChange={handleChange} className="w-full border p-2 rounded" /> <input type="text" name="kiraci" placeholder="Kiraci Ad Soyad" onChange={handleChange} className="w-full border p-2 rounded" /> <input type="number" name="tcNo" placeholder="TC Kimlik No" onChange={handleChange} className="w-full border p-2 rounded" /> <textarea name="adres" placeholder="Kiralanan Yer Adresi" onChange={handleChange} className="w-full border p-2 rounded" /> <div className="flex gap-4"> <input type="date" name="baslangic" onChange={handleChange} className="w-full border p-2 rounded" /> <input type="date" name="bitis" onChange={handleChange} className="w-full border p-2 rounded" /> </div> <input type="number" name="kiraBedeli" placeholder="Aylik Kira Bedeli (₺)" onChange={handleChange} className="w-full border p-2 rounded" /> <button type="submit" className="bg-blue-600 text-white px-4 py-2 rounded">PDF Olustur</button> </form> ); } else if (seciliBelge === 'dilekce') { return ( <form onSubmit={handleSubmit} className="space-y-4 mt-4"> <input type="text" name="adSoyad" placeholder="Ad Soyad" onChange={handleChange} className="w-full border p-2 rounded" /> <input type="number" name="tc" placeholder="TC Kimlik No" onChange={handleChange} className="w-full border p-2 rounded" /> <textarea name="adresDilekce" placeholder="Adres" onChange={handleChange} className="w-full border p-2 rounded" /> <input type="text" name="baslik" placeholder="Dilekçe Başlığı (örnek: ISTANBUL 48. ASLIYE CEZA MAHKEMESINE)" onChange={handleChange} className="w-full border p-2 rounded" /> <textarea name="metin" placeholder="Dilekçe Metni" onChange={handleChange} className="w-full border p-2 rounded" /> <input type="date" name="tarih" onChange={handleChange} className="w-full border p-2 rounded" /> <button type="submit" className="bg-green-600 text-white px-4 py-2 rounded">PDF Oluştur</button> </form> ); } else if (seciliBelge === 'istifa') { return <p className="mt-4">👔 Istifa dilekçesi yakinda burada olacak.</p>; } else if (seciliBelge === 'teklif') { return <p className="mt-4">📄 Teklif formu yakinda burada olacak.</p>; } else { return null; } };
+return ( <div className="max-w-xl mx-auto p-4"> <h1 className="text-xl font-bold mb-4">Kira Sozlesmesi</h1> <form onSubmit={handleSubmit} className="space-y-3"> <input name="mahalle" placeholder="Mahalle" onChange={handleChange} className="w-full border p-2" /> <input name="sokak" placeholder="Cadde/Sokak" onChange={handleChange} className="w-full border p-2" /> <input name="numara" placeholder="Numara" onChange={handleChange} className="w-full border p-2" /> <input name="cinsi" placeholder="Cinsi" onChange={handleChange} className="w-full border p-2" /> <input name="kullanim" placeholder="Kullanim Sekli" onChange={handleChange} className="w-full border p-2" /> <input name="durum" placeholder="Durumu" onChange={handleChange} className="w-full border p-2" /> <textarea name="demirbas" placeholder="Demirbaslar" onChange={handleChange} className="w-full border p-2" /> <hr /> <input name="kirayaVeren" placeholder="Kiraya Veren Ad Soyad" onChange={handleChange} className="w-full border p-2" /> <input name="kirayaVerenTC" placeholder="TC Kimlik No" onChange={handleChange} className="w-full border p-2" /> <textarea name="kirayaVerenAdres" placeholder="Kiraya Veren Adres" onChange={handleChange} className="w-full border p-2" /> <input name="kiraci" placeholder="Kiraci Ad Soyad" onChange={handleChange} className="w-full border p-2" /> <input name="kiraciTC" placeholder="Kiraci TC Kimlik No" onChange={handleChange} className="w-full border p-2" /> <textarea name="kiraciAdres" placeholder="Kiraci Adres" onChange={handleChange} className="w-full border p-2" /> <input name="baslangic" placeholder="Baslangic Tarihi" type="date" onChange={handleChange} className="w-full border p-2" /> <input name="sure" placeholder="Kira Suresi" onChange={handleChange} className="w-full border p-2" /> <input name="yillikBedel" placeholder="Yillik Kira Bedeli" onChange={handleChange} className="w-full border p-2" /> <input name="aylikBedel" placeholder="Aylik Kira Bedeli" onChange={handleChange} className="w-full border p-2" /> <input name="odemeSekli" placeholder="Odeme Sekli" onChange={handleChange} className="w-full border p-2" /> <input name="tarih" placeholder="Tarih" type="date" onChange={handleChange} className="w-full border p-2" /> <button className="bg-blue-600 text-white px-4 py-2 rounded">PDF Olustur</button> </form> </div> ); }
 
-return ( <div className="max-w-xl mx-auto p-4 font-sans"> <h1 className="text-2xl font-bold mb-4">Hazırtaslak</h1>
-
-{!seciliBelge && (
-    <div className="space-y-2">
-      <p className="mb-2">Hangi belgeyi olusturmak istiyorsunuz?</p>
-      <button onClick={() => setSeciliBelge('kira')} className="w-full bg-gray-200 p-2 rounded">🏠 Kira Sozlesmesi</button>
-      <button onClick={() => setSeciliBelge('dilekce')} className="w-full bg-gray-200 p-2 rounded">✍️ Dilekce</button>
-      <button onClick={() => setSeciliBelge('istifa')} className="w-full bg-gray-200 p-2 rounded">👔 Istifa Dilekcesi</button>
-      <button onClick={() => setSeciliBelge('teklif')} className="w-full bg-gray-200 p-2 rounded">📄 Teklif Formu</button>
-    </div>
-  )}
-
-  {renderForm()}
-</div>
-
-); }
-
-export default App;
-
+export
+  default App;
