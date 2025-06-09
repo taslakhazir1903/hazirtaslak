@@ -7,11 +7,11 @@ const handleChange = (e) => { setForm({ ...form, [e.target.name]: e.target.value
 const handleSubmit = (e) => { e.preventDefault(); const doc = new jsPDF();
 
 // Sayfa 1 – Bilgi Tablosu
-doc.setFontSize(14);
-doc.text('KIRA SOZLESMESI', 105, 15, { align: 'center' });
+doc.setFontSize(16);
+doc.text('KIRA SOZLESMESI', 105, 20, { align: 'center' });
 
 autoTable(doc, {
-  startY: 25,
+  startY: 30,
   head: [['Alan', 'Bilgi']],
   body: [
     ['Mahalle', form.mahalle],
@@ -33,12 +33,13 @@ autoTable(doc, {
     ['Aylik Bedel', form.aylikBedel],
     ['Odeme Sekli', form.odemeSekli],
   ],
-  styles: { fontSize: 10 }
+  styles: { fontSize: 12, cellPadding: 4 },
+  margin: { left: 15, right: 15 },
 });
 
 doc.addPage();
-doc.setFontSize(12);
-doc.text('GENEL KOSULLAR', 105, 15, { align: 'center' });
+doc.setFontSize(14);
+doc.text('GENEL KOSULLAR', 105, 20, { align: 'center' });
 const genelKosullar = [
   '1. Kiraci, kiralanani ozenle kullanmak zorundadir.',
   '2. Cevede iyi niyet kurallarina uygun davranmalidir.',
@@ -59,15 +60,16 @@ const genelKosullar = [
   '17. Yazili onayla anten vb. yaptirilabilir.',
   '18. Borclar kanununa tabi olunacaktir.',
 ];
-let y = 25;
+let y = 30;
+doc.setFontSize(12);
 genelKosullar.forEach((k) => {
   doc.text(k, 20, y);
-  y += 7;
+  y += 10;
 });
 
 doc.addPage();
-doc.setFontSize(12);
-doc.text('OZEL KOSULLAR', 105, 15, { align: 'center' });
+doc.setFontSize(14);
+doc.text('OZEL KOSULLAR', 105, 20, { align: 'center' });
 const ozelKosullar = [
   '1. Alt kiraya verilemez.',
   '2. Meskenden baska amacla kullanilamaz.',
@@ -80,15 +82,16 @@ const ozelKosullar = [
   '9. 3 gun icinde beyanname verilecektir.',
   '10. Anlasmazliklarda ilgili mahkemeler yetkilidir.',
 ];
-y = 25;
+y = 30;
+doc.setFontSize(12);
 ozelKosullar.forEach((k) => {
   doc.text(k, 20, y);
-  y += 7;
+  y += 10;
 });
 
 y += 10;
 doc.text(`Tarih: ${form.tarih}`, 20, y);
-y += 20;
+y += 25;
 doc.text('Kiraya Veren', 30, y);
 doc.text('Kiraci', 110, y);
 doc.text('Kefil', 160, y);
@@ -136,4 +139,3 @@ return ( <div className="max-w-3xl mx-auto p-6 space-y-6 text-sm"> <h1 className
 
 export default App;
 
-  
