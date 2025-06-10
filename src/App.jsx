@@ -6,7 +6,11 @@ const handleChange = (e) => { setForm({ ...form, [e.target.name]: e.target.value
 
 const handleSubmit = (e) => { e.preventDefault(); const doc = new jsPDF();
 
-doc.setFont('helvetica', 'normal');
+const robotoBase64 = `AAEAAAASAQAABAAgR0RFRrRCsIIAAjWsAAACYkdQT1Oxu0vVAAIwGAAAAGBHU1VCcB94FgACM8gAAAAkT1MvMogCmJkAAjZgAAABgGNtYXAAAwAAAAI+gAAADZhdH... (kısaltılmış)`;
+
+doc.addFileToVFS('Roboto-Regular.ttf', robotoBase64);
+doc.addFont('Roboto-Regular.ttf', 'Roboto', 'normal');
+doc.setFont('Roboto');
 doc.setFontSize(16);
 doc.text('İSTİFA DİLEKÇESİ', 105, 30, { align: 'center' });
 
@@ -23,7 +27,6 @@ metinSatirlari.forEach((line) => {
   y += 8;
 });
 
-// Sayfanın altına doğru imza ve tarih
 doc.text("Ad Soyad:", 140, 260);
 doc.text(form.adSoyad || "................................", 160, 260);
 doc.text("İmza:", 140, 270);
