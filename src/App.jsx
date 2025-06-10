@@ -12,22 +12,22 @@ let y = margin;
 doc.text(`${form.sirket} İnsan Kaynakları Departmanına`, margin, y);
 y += 10;
 
-const metin = `\n${form.istifaTarihi} tarihinde, ${form.pozisyon} pozisyonunda görev yaptığım ${form.sirket} şirketindeki görevimden, ${form.sonGun} tarihi itibarıyla istifa ediyorum.`;
-doc.text(metin, margin, y);
-y += 30;
+const metin = `${form.istifaTarihi} tarihinde, ${form.pozisyon} pozisyonunda görev yaptığım ${form.sirket} şirketindeki görevimden, ${form.sonGun} tarihi itibarıyla istifa ediyorum.`;
+const metinSatirlar = doc.splitTextToSize(metin, 170);
+doc.text(metinSatirlar, margin, y);
+y += metinSatirlar.length * 8 + 10;
 
 if (form.sebep) {
   doc.text('İstifa Sebebi:', margin, y);
-  y += 10;
+  y += 8;
   const satirlar = doc.splitTextToSize(form.sebep, 170);
   doc.text(satirlar, margin, y);
-  y += satirlar.length * 8;
+  y += satirlar.length * 8 + 10;
 }
 
-y = 270; // sayfanın en altına al
-doc.text("Gereğinin yapılmasını arz ederim.", margin, y - 20);
-doc.text(form.adSoyad, 160, y, { align: 'right' });
-doc.text(form.sonGun, 160, y + 10, { align: 'right' });
+doc.text("Gereğinin yapılmasını arz ederim.", margin, 250);
+doc.text(form.adSoyad, 180, 270, { align: 'right' });
+doc.text(form.sonGun, 180, 280, { align: 'right' });
 
 doc.save('istifa-dilekcesi.pdf');
 
@@ -46,7 +46,7 @@ return ( <div className="min-h-screen flex items-center justify-center bg-gray-1
       İstifa Dilekçesi Oluştur
     </button>
   </div>
-</div>
+
+  </div>
 
 ); }
-
