@@ -1,7 +1,8 @@
 import { useState } from "react";
 import jsPDF from "jspdf";
 
-const robotoBase64 = "AAEAAAASAQAABAAgR0RFRrRCsIIAAjWsAAACYkdQT1..."; // Uzun base64 kısmı yerine örnek (senin yüklediğin roboto içeriği buraya tam gelir)
+// Roboto base64 gömülü yazı tipi
+const robotoBase64 = "AAEAAAASAQAABAAgR0RFRrRCsIIAAjWsAAACYkdQT1..."; // ← senin Roboto base64 içeriğini tam buraya yapıştır
 
 export default function App() {
   const [form, setForm] = useState({
