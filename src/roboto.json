@@ -1,8 +1,3 @@
-fetch('/roboto.json')
-  .then(res => res.json())
-  .then(data => {
-    doc.addFileToVFS('Roboto-Regular.ttf', data.font);
-    doc.addFont('Roboto-Regular.ttf', 'Roboto', 'normal');
-    doc.setFont('Roboto');
-    // PDF içeriği buraya
-  });
+{
+  "font": "AAEAAAASAQAABAAgR0RFRrRCsIIAAjWsAAACYk... (çok uzun base64 kodu)"
+}
