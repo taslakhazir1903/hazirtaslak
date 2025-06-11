@@ -1,8 +1,8 @@
 import { useState } from "react";
 import jsPDF from "jspdf";
 
-// Roboto base64 gömülü yazı tipi
-const robotoBase64 = "AAEAAAASAQAABAAgR0RFRrRCsIIAAjWsAAACYkdQT1..."; // ← senin Roboto base64 içeriğini tam buraya yapıştır
+// Roboto base64 (örnek, sen tam halini buraya ekleyeceksin)
+const robotoBase64 = "AAEAAAASAQAABAAgR0RFRrRCsIIAAjWsAAACYkdQT1..."; 
 
 export default function App() {
   const [form, setForm] = useState({
@@ -19,7 +19,7 @@ export default function App() {
     setForm((prev) => ({ ...prev, [name]: value }));
   };
 
-  const createPDF = () => {
+  const handlePDF = () => {
     const doc = new jsPDF();
     doc.addFileToVFS("Roboto-Regular.ttf", robotoBase64);
     doc.addFont("Roboto-Regular.ttf", "Roboto", "normal");
@@ -52,7 +52,7 @@ export default function App() {
       <input type="date" name="istifaTarihi" onChange={handleChange} value={form.istifaTarihi} style={inputStyle} />
       <input type="date" name="sonGun" onChange={handleChange} value={form.sonGun} style={inputStyle} />
       <textarea name="sebep" placeholder="İstifa Sebebi (isteğe bağlı)" onChange={handleChange} value={form.sebep} style={{ ...inputStyle, height: "100px" }} />
-      <button onClick={createPDF} style={buttonStyle}>📄 PDF Olarak İndir</button>
+      <button onClick={handlePDF} style={buttonStyle}>📄 PDF Olarak İndir</button>
     </div>
   );
 }
