@@ -1,16 +1,12 @@
 import { useState } from 'react'; import jsPDF from 'jspdf';
 
+// Roboto fontunun gömülü base64 hali (kısaltıldı, yer kazanmak için kısa gösteriliyor) const robotoBase64 = "AAEAAAASAQAABAAgR0RFRrRCsIIAAjWsAAACYkdQT1...";
+
 export default function App() { const [form, setForm] = useState({ adSoyad: '', pozisyon: '', sirket: '', istifaTarihi: '', sonGun: '', sebep: '', });
 
 const handleChange = (e) => { const { name, value } = e.target; setForm((prev) => ({ ...prev, [name]: value })); };
 
-const createPDF = async () => { const res = await fetch('/roboto.json'); const data = await res.json();
-
-const doc = new jsPDF();
-doc.addFileToVFS('Roboto-Regular.ttf', data.font);
-doc.addFont('Roboto-Regular.ttf', 'Roboto', 'normal');
-doc.setFont('Roboto');
-doc.setFontSize(12);
+const createPDF = () => { const doc = new jsPDF(); doc.addFileToVFS('Roboto-Regular.ttf', robotoBase64); doc.addFont('Roboto-Regular.ttf', 'Roboto', 'normal'); doc.setFont('Roboto'); doc.setFontSize(12);
 
 const margin = 20;
 let y = margin;
