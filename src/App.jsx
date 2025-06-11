@@ -39,20 +39,41 @@ doc.save('istifa-dilekcesi.pdf');
 
 };
 
-return ( <div className="min-h-screen flex items-center justify-center bg-gray-100 p-4"> <div className="bg-white p-6 rounded-xl shadow-xl w-full max-w-md space-y-4"> <h1 className="text-2xl font-bold text-center">İstifa Dilekçesi</h1>
+return ( <div className="min-h-screen flex items-center justify-center bg-gray-100 py-10 px-4"> <div className="bg-white p-8 rounded-2xl shadow-2xl w-full max-w-2xl space-y-6"> <h1 className="text-3xl font-bold text-center text-gray-800">İstifa Dilekçesi Oluştur</h1>
 
-<input name="adSoyad" onChange={handleChange} value={form.adSoyad} placeholder="Adınız Soyadınız" className="w-full border p-2 rounded" />
-    <input name="pozisyon" onChange={handleChange} value={form.pozisyon} placeholder="Pozisyonunuz" className="w-full border p-2 rounded" />
-    <input name="sirket" onChange={handleChange} value={form.sirket} placeholder="Şirket Adı" className="w-full border p-2 rounded" />
-    <input type="date" name="istifaTarihi" onChange={handleChange} value={form.istifaTarihi} className="w-full border p-2 rounded" />
-    <input type="date" name="sonGun" onChange={handleChange} value={form.sonGun} className="w-full border p-2 rounded" />
-    <textarea name="sebep" onChange={handleChange} value={form.sebep} placeholder="İstifa Sebebi (isteğe bağlı)" className="w-full border p-2 rounded h-28" />
+<div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+      <div className="flex flex-col">
+        <label className="mb-1 text-sm font-medium text-gray-700">Adınız Soyadınız</label>
+        <input name="adSoyad" onChange={handleChange} value={form.adSoyad} className="border border-gray-300 rounded-lg p-3" />
+      </div>
+      <div className="flex flex-col">
+        <label className="mb-1 text-sm font-medium text-gray-700">Pozisyon</label>
+        <input name="pozisyon" onChange={handleChange} value={form.pozisyon} className="border border-gray-300 rounded-lg p-3" />
+      </div>
+      <div className="flex flex-col">
+        <label className="mb-1 text-sm font-medium text-gray-700">Şirket Adı</label>
+        <input name="sirket" onChange={handleChange} value={form.sirket} className="border border-gray-300 rounded-lg p-3" />
+      </div>
+      <div className="flex flex-col">
+        <label className="mb-1 text-sm font-medium text-gray-700">İstifa Tarihi</label>
+        <input type="date" name="istifaTarihi" onChange={handleChange} value={form.istifaTarihi} className="border border-gray-300 rounded-lg p-3" />
+      </div>
+      <div className="flex flex-col">
+        <label className="mb-1 text-sm font-medium text-gray-700">İşten Ayrılış Tarihi</label>
+        <input type="date" name="sonGun" onChange={handleChange} value={form.sonGun} className="border border-gray-300 rounded-lg p-3" />
+      </div>
+    </div>
 
-    <button onClick={createPDF} className="w-full bg-green-600 text-white font-semibold py-2 rounded hover:bg-green-700">
-      İstifa Dilekçesi Oluştur
+    <div className="flex flex-col">
+      <label className="mb-1 text-sm font-medium text-gray-700">İstifa Sebebi (isteğe bağlı)</label>
+      <textarea name="sebep" onChange={handleChange} value={form.sebep} rows={6} className="border border-gray-300 rounded-lg p-3" />
+    </div>
+
+    <button onClick={createPDF} className="w-full bg-green-600 text-white font-semibold py-3 rounded-lg hover:bg-green-700">
+      PDF Olarak İndir
     </button>
   </div>
-  
 </div>
 
 ); }
+
