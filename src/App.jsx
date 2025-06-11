@@ -1,42 +1,87 @@
-import { useState } from 'react';
-import jsPDF from 'jspdf';
+import React, { useState } from "react";
+import jsPDF from "jspdf";
+import "./App.css";
 
-const robotoBase64 = "AAEAAAASAQAABAAgR0RFRrRCsIIAAjWsAAACYkdQT1...";
-
-export default function App() {
-  const [form, setForm] = useState({
-    adSoyad: '',
-    pozisyon: '',
-    sirket: '',
-    istifaTarihi: '',
-    sonGun: '',
-    sebep: '',
+function App() {
+  const [formData, setFormData] = useState({
+    fullName: "",
+    position: "",
+    company: "",
+    resignationDate: "",
+    lastWorkingDay: "",
+    reason: "",
   });
 
   const handleChange = (e) => {
-    const { name, value } = e.target;
-    setForm((prev) => ({ ...prev, [name]: value }));
+    setFormData({ ...formData, [e.target.name]: e.target.value });
   };
 
-  const createPDF = () => {
+  const handleGeneratePDF = () => {
     const doc = new jsPDF();
-    doc.addFileToVFS('Roboto-Regular.ttf', robotoBase64);
-    doc.addFont('Roboto-Regular.ttf', 'Roboto', 'normal');
-    doc.setFont('Roboto');
+
+    doc.setFont("Roboto", "normal");
     doc.setFontSize(12);
-    doc.text("Test PDF ✓", 20, 20);
+
+    const text = `
+${formData.company} İnsan Kaynakları Departmanına,
+
+Aşağıda bilgileri yer alan ${formData.position} pozisyonundaki görevimden, ${formData.resignationDate} tarihinde istifa etmek istediğimi bildiririm. 
+${formData.lastWorkingDay} tarihi itibarıyla görevimden ayrılacağım.
+
+${formData.reason ? `İstifa Sebebi: ${formData.reason}` : ""}
+
+Gereğinin yapılmasını arz ederim.
+
+${new Date().toLocaleDateString("tr-TR")}
+
+Ad Soyad: ${formData.fullName}
+İmza:
+    `.trim();
+
+    const lines = doc.splitTextToSize(text, 180);
+    doc.text(lines, 15, 20);
     doc.save("istifa-dilekcesi.pdf");
   };
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-gray-100 py-10 px-4">
-      <div className="bg-white p-8 rounded-2xl shadow-2xl w-full max-w-2xl space-y-6">
-        <h1 className="text-3xl font-bold text-center text-gray-800">İstifa Dilekçesi Oluştur</h1>
-        <input name="adSoyad" onChange={handleChange} value={form.adSoyad} placeholder="Ad Soyad" className="w-full border p-3 rounded" />
-        <button onClick={createPDF} className="w-full bg-green-600 text-white py-3 rounded hover:bg-green-700">
-          PDF Olarak İndir
-        </button>
-      </div>
+    <div style={{ maxWidth: "500px", margin: "50px auto", fontFamily: "Roboto, sans-serif" }}>
+      <h2 style={{ textAlign: "center" }}>İstifa Dilekçesi</h2>
+
+      <label>Adınız Soyadınız</label>
+      <input type="text" name="fullName" value={formData.fullName} onChange={handleChange} />
+
+      <label>Pozisyonunuz</label>
+      <input type="text" name="position" value={formData.position} onChange={handleChange} />
+
+      <label>Şirket Adı</label>
+      <input type="text" name="company" value={formData.company} onChange={handleChange} />
+
+      <label>İstifa Tarihi</label>
+      <input type="date" name="resignationDate" value={formData.resignationDate} onChange={handleChange} />
+
+      <label>Son Çalışma Günü</label>
+      <input type="date" name="lastWorkingDay" value={formData.lastWorkingDay} onChange={handleChange} />
+
+      <label>İstifa Sebebi (isteğe bağlı)</label>
+      <textarea name="reason" value={formData.reason} onChange={handleChange} rows={5} />
+
+      <button
+        onClick={handleGeneratePDF}
+        style={{
+          backgroundColor: "#2ecc71",
+          color: "#fff",
+          padding: "10px",
+          border: "none",
+          marginTop: "20px",
+          width: "100%",
+          fontSize: "16px",
+          cursor: "pointer",
+        }}
+      >
+        📄 İstifa Dilekçesi Oluştur
+      </button>
     </div>
   );
 }
+
+export default App;
