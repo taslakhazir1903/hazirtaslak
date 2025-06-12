@@ -1,0 +1,1 @@
+export default function Istifa() { return <h1>İstifa Dilekçesi</h1>; }

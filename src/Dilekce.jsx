@@ -1,0 +1,1 @@
+export default function Dilekce() { return <h1>Genel Dilekçe</h1>; }
