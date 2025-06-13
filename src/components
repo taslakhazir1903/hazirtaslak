@@ -1,0 +1,190 @@
+import React, { useState } from "react";
+import jsPDF from "jspdf";
+import { robotoBase64 } from "../fonts/roboto"; // Roboto base64 font dosyası
+
+export default function Kira() {
+  const [form, setForm] = useState({
+    kirayaVeren: "",
+    kirayaVerenTC: "",
+    kiraci: "",
+    kiraciTC: "",
+    adres: "",
+    baslangicTarihi: "",
+    bitisTarihi: "",
+    bedel: "",
+    depozito: "",
+    ozelKosullar: ""
+  });
+
+  const handleChange = (e) => {
+    const { name, value } = e.target;
+    setForm((prev) => ({ ...prev, [name]: value }));
+  };
+
+  const generatePDF = () => {
+    const doc = new jsPDF({ unit: "pt", format: "a4" });
+
+    // Roboto font ekleniyor
+    doc.addFileToVFS("Roboto-Regular.ttf", robotoBase64);
+    doc.addFont("Roboto-Regular.ttf", "Roboto", "normal");
+    doc.setFont("Roboto");
+    doc.setFontSize(12);
+
+    // Sayfa 1 - Başlık + Temel Bilgiler
+    doc.setFontSize(18);
+    doc.text("KİRA SÖZLEŞMESİ", 300, 50, { align: "center" });
+    doc.setFontSize(12);
+    doc.setLineWidth(0.5);
+    doc.line(40, 65, 555, 65);
+
+    const labelX = 50;
+    const valueX = 190;
+    let y = 100;
+    const h = 25;
+
+    const writeField = (label, value) => {
+      doc.text(label, labelX, y);
+      doc.rect(valueX, y - 15, 340, 20);
+      doc.text(value || "________________________", valueX + 5, y);
+      y += h;
+    };
+
+    writeField("Kiraya Veren:", form.kirayaVeren);
+    writeField("Kiraya Veren TC:", form.kirayaVerenTC);
+    writeField("Kiracı:", form.kiraci);
+    writeField("Kiracı TC:", form.kiraciTC);
+    writeField("Kiralanan Adres:", form.adres);
+    writeField("Başlangıç Tarihi:", form.baslangicTarihi);
+    writeField("Bitiş Tarihi:", form.bitisTarihi);
+    writeField("Aylık Kira Bedeli (₺):", form.bedel);
+    writeField("Depozito (₺):", form.depozito);
+
+    doc.text("İşbu sözleşme taraflarca ... tarihinde düzenlenmiştir.", 50, y + 20);
+
+    // Sayfa 2 - Genel Koşullar
+    doc.addPage();
+    doc.setFontSize(16);
+    doc.text("GENEL KOŞULLAR", 300, 50, { align: "center" });
+    doc.setFontSize(12);
+
+    const genelKosullar = [
+      "1. Kiracı, kiralananı özenle kullanmakla yükümlüdür.",
+      "2. Aylık kira bedeli her ayın başında ödenecektir.",
+      "3. Kiralanan başkasına devredilemez.",
+      "4. Kiracı çıkarsa tüm sorumluluklarını yerine getirecektir.",
+      "5. Bakım/onarım kiraya verene aittir.",
+      "6. Kira artışı TÜFE oranında yapılır.",
+      "7. Fatura abonelikleri kiracıya aittir.",
+      "8. Komşuluk kurallarına uyulacaktır.",
+      "9. Kira süresi bitince kiralanan teslim edilir.",
+      "10. Taraflarca iki nüsha imzalanmıştır.",
+      "11. Anlaşmazlıkta yerel mahkemeler yetkilidir."
+    ];
+
+    let yy = 90;
+    genelKosullar.forEach((madde) => {
+      const split = doc.splitTextToSize(madde, 500);
+      doc.text(split, 50, yy);
+      yy += split.length * 18;
+    });
+
+    // Sayfa 3 - Özel Koşullar
+    doc.addPage();
+    doc.setFontSize(16);
+    doc.text("ÖZEL KOŞULLAR", 300, 50, { align: "center" });
+    doc.setFontSize(12);
+
+    const ozel = form.ozelKosullar.trim() || "Belirtilmemiştir.";
+    const ozelLines = doc.splitTextToSize(ozel, 500);
+    doc.text(ozelLines, 50, 100);
+
+    // İmza alanı
+    doc.line(80, 680, 230, 680);
+    doc.text("Kiraya Veren İmza", 110, 700);
+
+    doc.line(350, 680, 500, 680);
+    doc.text("Kiracı İmza", 400, 700);
+
+    doc.save("kira_sozlesmesi.pdf");
+  };
+
+  return (
+    <div style={containerStyle}>
+      <h2 style={{ textAlign: "center" }}>Kira Sözleşmesi</h2>
+      <form onSubmit={(e) => { e.preventDefault(); generatePDF(); }} style={formStyle}>
+        {[
+          { label: "Kiraya Veren Adı Soyadı", name: "kirayaVeren" },
+          { label: "Kiraya Veren TC", name: "kirayaVerenTC", maxLength: 11 },
+          { label: "Kiracı Adı Soyadı", name: "kiraci" },
+          { label: "Kiracı TC", name: "kiraciTC", maxLength: 11 },
+          { label: "Kira Başlangıç Tarihi", name: "baslangicTarihi", type: "date" },
+          { label: "Kira Bitiş Tarihi", name: "bitisTarihi", type: "date" },
+          { label: "Aylık Kira Bedeli (₺)", name: "bedel", type: "number" },
+          { label: "Depozito (₺)", name: "depozito", type: "number" }
+        ].map(({ label, name, ...rest }) => (
+          <label key={name}>
+            {label}
+            <input
+              name={name}
+              value={form[name]}
+              onChange={handleChange}
+              required
+              {...rest}
+            />
+          </label>
+        ))}
+
+        <label>
+          Kiralanan Adres:
+          <textarea
+            name="adres"
+            value={form.adres}
+            onChange={handleChange}
+            rows={3}
+            required
+          />
+        </label>
+
+        <label style={{ gridColumn: "1 / span 2" }}>
+          Özel Koşullar:
+          <textarea
+            name="ozelKosullar"
+            value={form.ozelKosullar}
+            onChange={handleChange}
+            rows={5}
+            placeholder="Varsa özel koşulları yazınız..."
+          />
+        </label>
+
+        <button type="submit" style={buttonStyle}>PDF Oluştur</button>
+      </form>
+    </div>
+  );
+}
+
+const containerStyle = {
+  maxWidth: 800,
+  margin: "40px auto",
+  padding: 20,
+  fontFamily: "'Roboto', sans-serif",
+  backgroundColor: "#fff",
+  borderRadius: 10,
+  boxShadow: "0 0 10px rgba(0,0,0,0.1)"
+};
+
+const formStyle = {
+  display: "grid",
+  gridTemplateColumns: "1fr 1fr",
+  gap: 20
+};
+
+const buttonStyle = {
+  gridColumn: "1 / span 2",
+  padding: 12,
+  fontSize: 16,
+  backgroundColor: "#007bff",
+  color: "white",
+  border: "none",
+  borderRadius: 5,
+  cursor: "pointer"
+};
