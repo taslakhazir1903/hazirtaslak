@@ -1,5 +1,6 @@
 import { useState } from "react";
 import jsPDF from "jspdf";
+import "../fonts/roboto"; // Roboto fontu entegre edildi
 
 export default function Istifa() {
   const [form, setForm] = useState({
@@ -15,17 +16,10 @@ export default function Istifa() {
     setForm({ ...form, [e.target.name]: e.target.value });
   };
 
-  const handlePDF = async () => {
+  const handlePDF = () => {
     const doc = new jsPDF();
-
-    // ✅ Roboto fontu yükle
-    const fontUrl = "/fonts/Roboto-Regular.ttf";
-    const fontBytes = await fetch(fontUrl).then((res) => res.arrayBuffer());
-    doc.addFileToVFS("Roboto-Regular.ttf", fontBytes);
-    doc.addFont("Roboto-Regular.ttf", "Roboto", "normal");
     doc.setFont("Roboto");
 
-    // ✅ PDF içeriği
     doc.setFontSize(12);
     doc.text(`${form.sirket} İnsan Kaynakları Departmanına`, 20, 30);
     doc.text(
@@ -43,15 +37,41 @@ export default function Istifa() {
   };
 
   return (
-    <div style={{ padding: "40px" }}>
-      <h2>İstifa Dilekçesi</h2>
-      <input name="adSoyad" placeholder="Ad Soyad" onChange={handleChange} />
-      <input name="pozisyon" placeholder="Pozisyon" onChange={handleChange} />
-      <input name="sirket" placeholder="Şirket Adı" onChange={handleChange} />
-      <input name="istifaTarihi" placeholder="İşe Başlama Tarihi" onChange={handleChange} />
-      <input name="sonGun" placeholder="Son Çalışma Günü" onChange={handleChange} />
-      <textarea name="sebep" placeholder="İstifa Sebebi (İsteğe bağlı)" onChange={handleChange} />
-      <button onClick={handlePDF}>PDF Olarak İndir</button>
+    <div style={{ padding: "40px", fontFamily: "sans-serif", maxWidth: "700px", margin: "0 auto" }}>
+      <h2 style={{ textAlign: "center", marginBottom: "20px" }}>İstifa Dilekçesi</h2>
+      <input name="adSoyad" placeholder="Ad Soyad" value={form.adSoyad} onChange={handleChange} style={inputStyle} />
+      <input name="pozisyon" placeholder="Pozisyon" value={form.pozisyon} onChange={handleChange} style={inputStyle} />
+      <input name="sirket" placeholder="Şirket Adı" value={form.sirket} onChange={handleChange} style={inputStyle} />
+      <input name="istifaTarihi" placeholder="İşe Başlama Tarihi" value={form.istifaTarihi} onChange={handleChange} style={inputStyle} />
+      <input name="sonGun" placeholder="Son Çalışma Günü" value={form.sonGun} onChange={handleChange} style={inputStyle} />
+      <textarea name="sebep" placeholder="İstifa Sebebi (İsteğe bağlı)" value={form.sebep} onChange={handleChange} style={textareaStyle} />
+      <button onClick={handlePDF} style={buttonStyle}>PDF Olarak İndir</button>
     </div>
   );
-      }
+}
+
+const inputStyle = {
+  width: "100%",
+  padding: "12px",
+  marginBottom: "10px",
+  border: "1px solid #ccc",
+  borderRadius: "6px",
+  fontSize: "14px"
+};
+
+const textareaStyle = {
+  ...inputStyle,
+  height: "100px",
+  resize: "vertical"
+};
+
+const buttonStyle = {
+  padding: "12px 20px",
+  backgroundColor: "#2ecc71",
+  color: "white",
+  border: "none",
+  borderRadius: "6px",
+  fontSize: "16px",
+  cursor: "pointer",
+  marginTop: "10px"
+};
