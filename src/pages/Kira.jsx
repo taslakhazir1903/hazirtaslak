@@ -1,5 +1,6 @@
 import { useState } from "react";
 import jsPDF from "jspdf";
+import { robotoBase64 } from "../fonts/roboto";
 
 export default function Kira() {
   const [form, setForm] = useState({
@@ -21,8 +22,12 @@ export default function Kira() {
 
   const generatePDF = () => {
     const doc = new jsPDF();
+    doc.addFileToVFS("Roboto-Regular.ttf", robotoBase64);
+    doc.addFont("Roboto-Regular.ttf", "Roboto", "normal");
+    doc.setFont("Roboto");
+    doc.setFontSize(11);
 
-    doc.setFontSize(12);
+    // Sayfa 1
     doc.text("KİRA SÖZLEŞMESİ", 80, 20);
     doc.text(`Kiraya Veren: ${form.kirayaVeren}`, 20, 40);
     doc.text(`TC Kimlik No: ${form.kirayaVerenTC}`, 20, 50);
@@ -34,9 +39,9 @@ export default function Kira() {
     doc.text(`Aylık Kira Bedeli: ${form.bedel}`, 20, 110);
     doc.text(`Depozito: ${form.depozito}`, 20, 120);
 
+    // Sayfa 2 - Genel Koşullar
     doc.addPage();
-    doc.text("GENEL KOŞULLAR", 80, 20);
-    const genel = [
+    const kosullar = [
       "1. Kiracı, kiralananı özenle kullanmakla yükümlüdür.",
       "2. Aylık kira bedeli zamanında ödenecektir.",
       "3. Kiralanan, üçüncü kişilere devredilemez.",
@@ -50,23 +55,28 @@ export default function Kira() {
       "11. Sözleşme 2 nüsha olarak düzenlenmiştir.",
       "12. Taraflar tüm maddeleri okuyup kabul etmişlerdir."
     ];
-    doc.text(genel.join("\n"), 20, 40);
+    doc.text("GENEL KOŞULLAR", 80, 20);
+    doc.text(doc.splitTextToSize(kosullar.join("\n"), 170), 20, 40);
 
+    // Sayfa 3 - Özel Koşullar ve İmzalar
     doc.addPage();
     doc.text("ÖZEL KOŞULLAR", 80, 20);
-    doc.text(form.ozelKosullar ? form.ozelKosullar : "Belirtilmemiştir.", 20, 40);
-    doc.text("Kiraya Veren:", 20, 250);
-    doc.text("İmza: ......................", 20, 260);
-    doc.text("Kiracı:", 120, 250);
-    doc.text("İmza: ......................", 120, 260);
+    const ozel = form.ozelKosullar
+      ? doc.splitTextToSize(form.ozelKosullar, 170)
+      : ["Belirtilmemiştir."];
+    doc.text(ozel, 20, 40);
+    doc.text("Kiraya Veren: " + form.kirayaVeren, 20, 250);
+    doc.text("İmza: .........................", 20, 260);
+    doc.text("Kiracı: " + form.kiraci, 120, 250);
+    doc.text("İmza: .........................", 120, 260);
 
     doc.save("kira-sozlesmesi.pdf");
   };
 
   return (
-    <div style={{ padding: "40px", fontFamily: "sans-serif", maxWidth: "800px", margin: "0 auto" }}>
+    <div style={containerStyle}>
       <h2>Kira Sözleşmesi Oluştur</h2>
-      <div style={{ display: "grid", gridTemplateColumns: "1fr 2fr", gap: "10px", marginTop: "20px" }}>
+      <div style={gridStyle}>
         <label>Kiraya Veren:</label>
         <input name="kirayaVeren" value={form.kirayaVeren} onChange={handleChange} />
         <label>TC Kimlik No:</label>
@@ -94,21 +104,32 @@ export default function Kira() {
         rows={4}
         style={{ width: "100%", padding: "10px", marginTop: "5px" }}
       />
-      <button
-        onClick={generatePDF}
-        style={{
-          marginTop: "30px",
-          padding: "12px 24px",
-          backgroundColor: "#2ecc71",
-          color: "#fff",
-          border: "none",
-          borderRadius: "6px",
-          fontSize: "16px",
-          cursor: "pointer"
-        }}
-      >
-        PDF OLUŞTUR
-      </button>
+      <button onClick={generatePDF} style={buttonStyle}>PDF OLUŞTUR</button>
     </div>
   );
-      }
+}
+
+const containerStyle = {
+  padding: "40px",
+  fontFamily: "sans-serif",
+  maxWidth: "800px",
+  margin: "0 auto"
+};
+
+const gridStyle = {
+  display: "grid",
+  gridTemplateColumns: "1fr 2fr",
+  gap: "10px",
+  marginTop: "20px"
+};
+
+const buttonStyle = {
+  marginTop: "30px",
+  padding: "12px 24px",
+  backgroundColor: "#2ecc71",
+  color: "#fff",
+  border: "none",
+  borderRadius: "6px",
+  fontSize: "16px",
+  cursor: "pointer"
+};
