@@ -1,0 +1,6 @@
+import { jsPDF } from "jspdf";
+
+const robotoBase64 = "AAEAAAATAQAABAAwR1NVQgAAAYYAAADsY21hcAAAAeAAAADoZ2x5ZgAAAggAAADAZ2hlYQAABHAAAAB6aGhlYQAAEJgAAAAkaG10eAAAEYAAAAD0bG9jYQAAGRgAAABwbWF4cAAAGRwAAAAgbmFtZQAAGIgAAALUcG9zdAAAGbAAAAD0cHJlcAAAGgAAAAAId2FtcAAAAcgAAAA=";
+
+jsPDF.API.addFileToVFS("Roboto-Regular.ttf", robotoBase64);
+jsPDF.API.addFont("Roboto-Regular.ttf", "Roboto", "normal");
