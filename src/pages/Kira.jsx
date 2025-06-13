@@ -28,29 +28,77 @@ export default function Kira() {
     doc.text(`Kiraya Veren: ${form.kirayaVeren}`, 20, 40);
     doc.text(`TC Kimlik No: ${form.kirayaVerenTC}`, 20, 50);
 
+import { useState } from "react";
+import jsPDF from "jspdf";
+import { robotoBase64 } from "../fonts/roboto"; // bu dosyayı ayrıca vereceğim
+
+export default function Kira() {
+  const [form, setForm] = useState({
+    kirayaVeren: "",
+    kirayaVerenTC: "",
+    kiraci: "",
+    kiraciTC: "",
+    adres: "",
+    baslangicTarihi: "",
+    bitisTarihi: "",
+    bedel: "",
+    depozito: "",
+    ozelKosullar: ""
+  });
+
+  const handleChange = (e) => {
+    setForm({ ...form, [e.target.name]: e.target.value });
+  };
+
+  const generatePDF = () => {
+    const doc = new jsPDF();
+
+    // Roboto fontunu göm
+    doc.addFileToVFS("Roboto-Regular.ttf", robotoBase64);
+    doc.addFont("Roboto-Regular.ttf", "Roboto", "normal");
+    doc.setFont("Roboto");
+    doc.setFontSize(11);
+
+    // Sayfa 1
+    doc.text("KİRA SÖZLEŞMESİ", 80, 20);
+    doc.text(`Kiraya Veren: ${form.kirayaVeren}`, 20, 40);
+    doc.text(`TC Kimlik No: ${form.kirayaVerenTC}`, 20, 50);
     doc.text(`Kiracı: ${form.kiraci}`, 20, 60);
     doc.text(`TC Kimlik No: ${form.kiraciTC}`, 20, 70);
-
     doc.text(`Kiralanan Adres: ${form.adres}`, 20, 80);
-
     doc.text(`Başlangıç Tarihi: ${form.baslangicTarihi}`, 20, 90);
     doc.text(`Bitiş Tarihi: ${form.bitisTarihi}`, 20, 100);
-
     doc.text(`Aylık Kira Bedeli: ${form.bedel}`, 20, 110);
     doc.text(`Depozito: ${form.depozito}`, 20, 120);
 
+    // Sayfa 2 - Genel Koşullar
     doc.addPage();
     doc.text("GENEL KOŞULLAR", 80, 20);
-    for (let i = 1; i <= 12; i++) {
-      doc.text(`${i}. .........................................................`, 20, 30 + i * 10);
-    }
+    const genelKosullar = [
+      "Kiracı, kiralananı özenle kullanmakla yükümlüdür.",
+      "Kira süresi boyunca aylık kira bedeli zamanında ödenecektir.",
+      "Kiralanan, üçüncü kişilere devredilemez.",
+      "Kiracı, kira süresi bitmeden çıkarsa sorumluluklarını yerine getirmelidir.",
+      "Bakım ve onarımlar kiraya verene aittir.",
+      "Kira artışı, yıllık TÜFE oranında yapılır.",
+      "Elektrik, su, doğalgaz vb. abonelikler kiracıya aittir.",
+      "Kiracı, komşuluk kurallarına uymalıdır.",
+      "Sözleşme süresi sonunda kiralanan teslim edilir.",
+      "Taraflar arasında çıkan ihtilaflarda mahkemeler yetkilidir.",
+      "İki nüsha olarak hazırlanmıştır.",
+      "Taraflarca okunarak imzalanmıştır."
+    ];
+    genelKosullar.forEach((m, i) => {
+      doc.text(`${i + 1}. ${m}`, 20, 40 + i * 10);
+    });
 
+    // Sayfa 3 - Özel Koşullar ve İmzalar
     doc.addPage();
     doc.text("ÖZEL KOŞULLAR", 80, 20);
-    doc.text(form.ozelKosullar || "......................................................", 20, 40);
-
-    doc.text("Kiraya Veren İmza: ......................", 20, 240);
-    doc.text("Kiracı İmza: ......................", 120, 240);
+    const ozel = doc.splitTextToSize(form.ozelKosullar || "Belirtilmemiştir.", 170);
+    doc.text(ozel, 20, 40);
+    doc.text("Kiraya Veren İmza: ......................", 20, 250);
+    doc.text("Kiracı İmza: ......................", 120, 250);
 
     doc.save("kira-sozlesmesi.pdf");
   };
