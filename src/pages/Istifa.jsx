@@ -15,11 +15,17 @@ export default function Istifa() {
     setForm({ ...form, [e.target.name]: e.target.value });
   };
 
-  const handlePDF = () => {
+  const handlePDF = async () => {
     const doc = new jsPDF();
-    doc.addFont("/fonts/Roboto-Regular.ttf", "Roboto", "normal");
+
+    // ✅ Roboto fontu yükle
+    const fontUrl = "/fonts/Roboto-Regular.ttf";
+    const fontBytes = await fetch(fontUrl).then((res) => res.arrayBuffer());
+    doc.addFileToVFS("Roboto-Regular.ttf", fontBytes);
+    doc.addFont("Roboto-Regular.ttf", "Roboto", "normal");
     doc.setFont("Roboto");
 
+    // ✅ PDF içeriği
     doc.setFontSize(12);
     doc.text(`${form.sirket} İnsan Kaynakları Departmanına`, 20, 30);
     doc.text(
@@ -48,4 +54,4 @@ export default function Istifa() {
       <button onClick={handlePDF}>PDF Olarak İndir</button>
     </div>
   );
-}
+      }
