@@ -1,6 +1,5 @@
 import React, { useState } from "react";
 import jsPDF from "jspdf";
-import { robotoBase64 } from "../fonts/roboto"; // Bu dosyanın projede olduğundan emin ol
 
 export default function Kira() {
   const [form, setForm] = useState({
@@ -22,11 +21,7 @@ export default function Kira() {
   const generatePDF = () => {
     const doc = new jsPDF();
 
-    // Roboto font ekleme
-    doc.addFileToVFS("Roboto-Regular.ttf", robotoBase64);
-    doc.addFont("Roboto-Regular.ttf", "Roboto", "normal");
-    doc.setFont("Roboto");
-
+    // Font ekleme satırları kaldırıldı (robotoBase64 yok)
     doc.setFontSize(14);
     doc.text("Kira Sözleşmesi", 105, 20, null, null, "center");
 
@@ -43,7 +38,6 @@ export default function Kira() {
     doc.text(`Kira Başlangıç Tarihi: ${form.kiraBaslangic}`, 20, 130);
     doc.text(`Kira Bitiş Tarihi: ${form.kiraBitis}`, 20, 140);
 
-    // PDF'i kaydet
     doc.save("kira-sozlesmesi.pdf");
   };
 
@@ -152,4 +146,4 @@ export default function Kira() {
       </form>
     </div>
   );
-      }
+            }
