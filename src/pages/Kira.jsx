@@ -53,32 +53,9 @@ export default function Kira() {
   const generatePDF = () => {
     const doc = new jsPDF();
 
-    // Roboto fontunu göm
-    doc.addFileToVFS("Roboto-Regular.ttf", robotoBase64);
-    doc.addFont("Roboto-Regular.ttf", "Roboto", "normal");
-    doc.setFont("Roboto");
-    doc.setFontSize(11);
-
-    // Sayfa 1
-    doc.text("KİRA SÖZLEŞMESİ", 80, 20);
-    doc.text(`Kiraya Veren: ${form.kirayaVeren}`, 20, 40);
-    doc.text(`TC Kimlik No: ${form.kirayaVerenTC}`, 20, 50);
-    doc.text(`Kiracı: ${form.kiraci}`, 20, 60);
-    doc.text(`TC Kimlik No: ${form.kiraciTC}`, 20, 70);
-    doc.text(`Kiralanan Adres: ${form.adres}`, 20, 80);
-    doc.text(`Başlangıç Tarihi: ${form.baslangicTarihi}`, 20, 90);
-    doc.text(`Bitiş Tarihi: ${form.bitisTarihi}`, 20, 100);
-    doc.text(`Aylık Kira Bedeli: ${form.bedel}`, 20, 110);
-    doc.text(`Depozito: ${form.depozito}`, 20, 120);
-
-    // Sayfa 2 - Genel Koşullar
-    doc.addPage();
-    doc.text("GENEL KOŞULLAR", 80, 20);
-    const genelKosullar = [
-      "Kiracı, kiralananı özenle kullanmakla yükümlüdür.",
 import { useState } from "react";
 import jsPDF from "jspdf";
-import { robotoBase64 } from "../fonts/roboto"; // Bu dosyayı src/fonts içine ekle
+import { robotoBase64 } from "../fonts/roboto"; // Bu dosya src/fonts içine eklenecek
 
 export default function Kira() {
   const [form, setForm] = useState({
@@ -107,7 +84,7 @@ export default function Kira() {
     doc.setFont("Roboto");
     doc.setFontSize(11);
 
-    // Sayfa 1
+    // Sayfa 1: Temel Bilgiler
     doc.text("KİRA SÖZLEŞMESİ", 80, 20);
     doc.text(`Kiraya Veren: ${form.kirayaVeren}`, 20, 40);
     doc.text(`TC Kimlik No: ${form.kirayaVerenTC}`, 20, 50);
@@ -119,7 +96,7 @@ export default function Kira() {
     doc.text(`Aylık Kira Bedeli: ${form.bedel}`, 20, 110);
     doc.text(`Depozito: ${form.depozito}`, 20, 120);
 
-    // Sayfa 2 - Genel Koşullar
+    // Sayfa 2: Genel Koşullar
     doc.addPage();
     doc.text("GENEL KOŞULLAR", 80, 20);
     const genelKosullar = [
@@ -140,7 +117,7 @@ export default function Kira() {
       doc.text(`${i + 1}. ${madde}`, 20, 40 + i * 10);
     });
 
-    // Sayfa 3 - Özel Koşullar ve İmzalar
+    // Sayfa 3: Özel Koşullar ve İmzalar
     doc.addPage();
     doc.text("ÖZEL KOŞULLAR", 80, 20);
     const ozel = doc.splitTextToSize(form.ozelKosullar || "Belirtilmemiştir.", 170);
@@ -216,6 +193,13 @@ const buttonStyle = {
   marginTop: "30px",
   padding: "12px 24px",
   backgroundColor: "#2ecc71",
+  color: "#fff",
+  border: "none",
+  borderRadius: "6px",
+  fontSize: "16px",
+  cursor: "pointer"
+};
+71",
   color: "#fff",
   border: "none",
   borderRadius: "6px",
